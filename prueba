@@ -1,0 +1,103 @@
+from vis_cuadro import visualizacion
+#Definimos como se maneja la informacion para los estados 
+
+E_inicial=[1,2,3,8,0,4,7,6,5]
+
+E_objetivo=[2,0,3,1,8,4,7,6,5]
+
+
+#Visualizacion del cuadro magico
+def impresion(nodo):
+    inicio=0
+    for i in enumerate([2,5,9]):
+        print(nodo[inicio:i[1]+1])
+        inicio=inicio+3
+        
+impresion(E_inicial)
+print("fin: ")
+impresion(E_objetivo)
+#Definimos un arreglo que nos permita conocer la posicion en espacio 3x3
+def lista_3(nodo):
+    inicio=0
+    nodo3=[]
+    for i in enumerate([2,5,9]):
+        nodo3.append(nodo[inicio:i[1]+1])
+        inicio=inicio+3
+    return nodo3
+
+#definimos un arreglo que haga lo inverso que lista_3
+def lista_l(nodo):
+    lista_n=[]
+    for hijo_aux in nodo:
+        for ele in hijo_aux:
+            lista_n.append(ele)
+    return lista_n
+
+nodo_ini=lista_3(E_inicial)
+#Definimos los movimientos para cada nodo
+def hijos(nodo):
+    hijos=[]
+    nodo_aux=lista_3(nodo)#lista a arreglo de 3X3
+    #Definimos los movimientos permitidos, encontrando el espacio vacio
+    pos=nodo.index(0) #nos da un valor de 0-8
+    #Definimos la fila y columna a la que corresponde
+    fila=pos//3 #Division entera o sin residuo 
+    columna=pos%3 # modulo
+    #Movimientos  arriba / abajo / izquierda / derecha
+    movimientos=[[-1,0],[1,0],[0,-1],[0,1]]
+    #Definimos las reglas
+    if fila-1 >= 0:#Hacia abajo
+        nodo_aux[fila][columna]=nodo_aux[fila-1][columna]
+        nodo_aux[fila-1][columna]=0 #Movemos hacia abajo el valor
+        nodo_lista=lista_l(nodo_aux)
+        hijos.append(nodo_lista)
+        nodo_aux=lista_3(nodo)#lista a arreglo de 3X3
+        
+    if fila+1 <= 2:#Hacia arriba
+        nodo_aux[fila][columna]=nodo_aux[fila+1][columna] #Movemos hacia arriba el valor
+        nodo_aux[fila+1][columna]=0
+        nodo_lista=lista_l(nodo_aux)
+        hijos.append(nodo_lista)
+        nodo_aux=lista_3(nodo)#lista a arreglo de 3X3
+    if columna+1 <= 2:#Hacia izquierda
+        nodo_aux[fila][columna]=nodo_aux[fila][columna+1] #Movemos hacia arriba el valor
+        nodo_aux[fila][columna+1]=0
+        nodo_lista=lista_l(nodo_aux)
+        hijos.append(nodo_lista)
+        nodo_aux=lista_3(nodo)#lista a arreglo de 3X3
+    if columna-1 >= 0:#Hacia derecha
+        nodo_aux[fila][columna]=nodo_aux[fila][columna-1] #Movemos hacia arriba el valor
+        nodo_aux[fila][columna-1]=0
+        nodo_lista=lista_l(nodo_aux)
+        hijos.append(nodo_lista)
+        nodo_aux=lista_3(nodo)#lista a arreglo de 3X3
+    return hijos
+    
+camino=[]
+pila=[E_inicial]# El primer elemento es "A"
+
+costo=0
+while pila:
+    nodo=pila.pop(-1)
+    #Definimos si llegamos a la solucion
+    if nodo == E_objetivo:
+        camino.append(nodo)
+        print("llegamos a la solucion: \n")
+        for visitados in camino:
+            print("solucion: ")
+            impresion(visitados)
+        #Terminamos
+        break
+    
+    camino.append(nodo)
+    costo+=1
+    print("Costo: ",costo)
+    hijo=hijos(nodo)
+    for nodo_hijo in hijo:
+        if nodo_hijo not in camino:
+            pila.append(nodo_hijo)
+        
+
+visualizacion(camino)
+
+
